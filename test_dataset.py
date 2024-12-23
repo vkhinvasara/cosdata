@@ -174,15 +174,27 @@ def compare_csv_results(brute_force_csv="dataset_brute_force_results.csv", serve
     count = 0
     for query_id, bf_obj in bf_map.items():
         if query_id in server_map:
-            bf_ids = set(bf_obj["top_ids"])
-            server_ids = set(server_map[query_id]["top_ids"])
+            # Convert each top-5 list to remove the query_id if present, then keep only 4 items
+            bf_list = bf_obj["top_ids"]
+            if query_id in bf_list:
+                bf_list.remove(query_id)
+            bf_list = bf_list[:4]
+    
+            server_list = server_map[query_id]["top_ids"]
+            if query_id in server_list:
+                server_list.remove(query_id)
+            server_list = server_list[:4]
+    
+            bf_ids = set(bf_list)
+            server_ids = set(server_list)
+    
             intersection_count = len(bf_ids & server_ids)
-            recall = (intersection_count / 5.0) * 100.0
+            recall = (intersection_count / 4.0) * 100.0
             total_recall += recall
             count += 1
-
+    
     avg_recall = (total_recall / count) if count > 0 else 0
-    print(f"Average Recall@5: {avg_recall:.2f}%")
+    print(f"Average Recall@4: {avg_recall:.2f}%")
 
 if __name__ == "__main__":
     # generate_brute_force_results()
