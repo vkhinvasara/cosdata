@@ -174,7 +174,6 @@ def compare_csv_results(brute_force_csv="dataset_brute_force_results.csv", serve
     count = 0
     for query_id, bf_obj in bf_map.items():
         if query_id in server_map:
-            # Convert each top-5 list to remove the query_id if present, then keep only 4 items
             bf_list = bf_obj["top_ids"]
             if query_id in bf_list:
                 bf_list.remove(query_id)
@@ -197,7 +196,7 @@ def compare_csv_results(brute_force_csv="dataset_brute_force_results.csv", serve
     print(f"Average Recall@4: {avg_recall:.2f}%")
 
 if __name__ == "__main__":
-    # generate_brute_force_results()
-    # upsert_dataset_vectors()
-    # search_query_vectors()
+    generate_brute_force_results()
+    upsert_dataset_vectors()
+    search_query_vectors()
     compare_csv_results()
