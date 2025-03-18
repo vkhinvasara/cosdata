@@ -294,6 +294,8 @@ pub enum WaCustomError {
     MetadataError(metadata::Error),
     NotFound(String),
     ConfigError(String),
+    RbacError(String),
+    UnauthorizedError(String),
 }
 
 impl std::error::Error for WaCustomError {}
@@ -322,6 +324,8 @@ impl fmt::Display for WaCustomError {
             WaCustomError::MetadataError(err) => write!(f, "Metadata error: {}", err),
             WaCustomError::NotFound(msg) => write!(f, "{} Not Found!", msg),
             WaCustomError::ConfigError(msg) => write!(f, "{} Config file reading error: ", msg),
+            WaCustomError::RbacError(msg) => write!(f, "RBAC Error: {}", msg),
+            WaCustomError::UnauthorizedError(msg) => write!(f, "Unauthorized: {}", msg),
         }
     }
 }
@@ -348,6 +352,12 @@ impl From<DistanceError> for WaCustomError {
 impl From<BufIoError> for WaCustomError {
     fn from(error: BufIoError) -> Self {
         Self::BufIo(Arc::new(error))
+    }
+}
+
+impl From<lmdb::Error> for WaCustomError {
+    fn from(error: lmdb::Error) -> Self {
+        WaCustomError::DatabaseError(error.to_string())
     }
 }
 
